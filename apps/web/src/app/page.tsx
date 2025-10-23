@@ -1,46 +1,33 @@
-"use client";
-import { useQuery } from "@tanstack/react-query";
-import { orpc } from "@/utils/orpc";
+"use client"
+import { useState } from "react";
+import CryptoTracker from "@/components/crypto-tracker";
+import Header from "@/components/header";
+import PerformanceGraph from "@/components/performance-graph";
+import TradesSidebar from "@/components/trades-sidebar";
+import { LightRays } from "@/components/ui/light-rays";
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
+export default function HomePage() {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
-
-export default function Home() {
-	const healthCheck = useQuery(orpc.healthCheck.queryOptions());
-
-	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-						/>
-						<span className="text-sm text-muted-foreground">
-							{healthCheck.isLoading
-								? "Checking..."
-								: healthCheck.data
-									? "Connected"
-									: "Disconnected"}
-						</span>
-					</div>
-				</section>
-			</div>
-		</div>
-	);
+  return (
+    <div className="flex h-screen flex-col overflow-hidden">
+      <LightRays />
+      <Header
+        isSidebarExpanded={isSidebarExpanded}
+        onToggleSidebar={() => setIsSidebarExpanded(!isSidebarExpanded)}
+      />
+      <div className="flex flex-1 min-h-0 relative">
+        <div className="flex-1 flex flex-col min-h-0">
+          <CryptoTracker />
+          <div className="flex-1 min-h-0">
+            <PerformanceGraph />
+          </div>
+        </div>
+        <TradesSidebar
+          isExpanded={isSidebarExpanded}
+          onToggle={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        />
+      </div>
+    </div>
+  );
 }
